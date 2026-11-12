@@ -1,133 +1,75 @@
 # Blood Donation Network with Smart Matching
 
-A beginner-friendly FSD-II capstone project based on the supplied project idea.
+React + Vite frontend and Node.js + Express + MongoDB backend for discovering compatible blood donors and creating blood requests.
 
 ## Features
+- User registration and login with JWT
+- Password hashing with bcryptjs
+- Donor search by blood-group compatibility and city
+- Blood request creation and dashboard
+- Smart donor ranking using compatibility, location and urgency
+- Health endpoint for deployment checks
 
-- User registration and login using JWT
-- Donor registration
-- Blood-group compatibility matching
-- Donor availability
-- City/distance based ranking
-- Emergency/high urgency priority
-- Blood request creation
-- Smart donor match scores
-- Request dashboard
-- React frontend
-- Node.js + Express backend
-- MongoDB database
+## Run locally (Windows / VS Code)
 
-## Project structure
-
-```text
-Blood_Donation_Smart_Matching/
-├── backend/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── server.js
-│   ├── seed.js
-│   ├── package.json
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
-└── README.md
-```
-
-## Requirements
-
-- Node.js 18+
-- MongoDB Community Server OR MongoDB Atlas
-- VS Code
-
-## Run backend
-
-Open terminal:
-
-```bash
+### Backend
+```powershell
 cd backend
 npm install
-copy .env.example .env
-npm run dev
-```
-
-For Windows PowerShell, if `copy` is unavailable:
-
-```powershell
 Copy-Item .env.example .env
 ```
+Edit `backend/.env` with your MongoDB URI and a long random JWT secret, then run:
+```powershell
+npm start
+``
+API: http://localhost:5000
 
-Edit `.env` if your MongoDB connection is different.
-
-Optional sample donor data:
-
-```bash
-node seed.js
-```
-
-Backend:
-http://localhost:5000
-
-## Run frontend
-
-Open a second terminal:
-
-```bash
+### Frontend (new terminal)
+```powershell
 cd frontend
 npm install
+Copy-Item .env.example .env
 npm run dev
 ```
+Frontend: http://localhost:5173
 
-Open:
-http://localhost:5173
+## Production deployment
 
-## Demo flow
+This repository is configured for Vercel (frontend), Render (backend) and MongoDB Atlas (database).
 
-1. Register a user.
-2. Open Find Donors and search a blood group.
-3. Create a Blood Request.
-4. The system finds compatible available donors.
-5. Matching score uses:
-   - exact blood-group match
-   - compatibility
-   - same city / distance
-   - urgency
-6. View requests in Dashboard.
+### MongoDB Atlas
+1. Create an Atlas project, a free cluster (if available), and a database user.
+2. Allow network access from Render. For a student demo, Atlas may use `0.0.0.0/0`; use a strong unique DB password and restrict this later.
+3. Copy the connection string and set the database name to `blood_donation`. Keep this URI private; never commit it.
 
-## Important academic note
+### Render backend
+- Connect this GitHub repository.
+- Root directory: `backend`
+- Build command: `npm install`
+- Start command: `npm start`
+- Set `NODE_ENV=production`, `MONGO_URI` to the private Atlas URI, `JWT_SECRET` to a long random secret, and `CORS_ORIGINS` to your Vercel production URL.
+- Health check: `/health`. It should return HTTP 200 with `database: connected`.
 
-Distance is simulated using the donor's `distanceKm` field. No real GPS or map API is required for this version.
+### Vercel frontend
+- Import this repository and keep project root at repository root.
+- Build/output settings are in `vercel.json`.
+- Set `VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com/api`.
+- Deploy, then add the exact Vercel URL to Render's `CORS_ORIGINS` and redeploy the backend.
 
-The notification requirement from the project idea is represented as a backend-ready matching workflow; real SMS/email notifications can be added later using a notification provider.
+## Important
+- Never publish `.env`, database passwords, JWT secrets, or real donor personal details.
+- Use fictional sample donor details in public demos.
+- Distance is simulated by the donor `distanceKm` field; it is not GPS navigation.
+- This is an academic demo, not a verified medical emergency service. Verify donors and hospitals independently.
+- Free hosting services may sleep when idle and provider limits can change.
 
 ## API endpoints
-
-### Authentication
-POST `/api/auth/register`
-POST `/api/auth/login`
-
-### Donors
-GET `/api/donors?bloodGroup=A%2B&city=Kharar`
-POST `/api/donors`
-PUT `/api/donors/:id/availability`
-
-### Requests
-GET `/api/requests`
-POST `/api/requests`
-GET `/api/requests/:id/matches`
-PATCH `/api/requests/:id/status`
-
-## Suggested future extensions
-
-- Email/SMS notifications
-- Admin panel
-- Priority queue for emergencies
-- Redis caching
-- WebSockets for live donor availability
-- Hospital verification
-- Donation history
-- Password hashing with bcrypt
-- Production deployment
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/donors?bloodGroup=A%2B&city=Kharar`
+- `POST /api/donors` (authenticated)
+- `PUT /api/donors/:id/availability` (authenticated)
+- `GET /api/requests` (authenticated)
+- `POST /api/requests` (authenticated)
+- `GET /api/requests/:id/matches` (authenticated)
+- `PATCH /api/requests/:id/status` (authenticated)
