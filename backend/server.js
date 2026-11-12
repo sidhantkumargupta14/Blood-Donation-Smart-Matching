@@ -7,9 +7,9 @@ const donorRoutes = require("./routes/donors");
 const requestRoutes = require("./routes/requests");
 
 const app = express();
-const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean);
+const allowedOrigins = new Set(["https://bloodconnect-live.onrender.com", ...(process.env.CORS_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean)]);
 app.use(cors({ origin(origin, callback) {
-  if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return callback(null, true);
+  if (!origin || allowedOrigins.has(origin) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return callback(null, true);
   return callback(new Error("Origin is not allowed by CORS"));
 }}));
 app.use(express.json({limit:"1mb"}));
