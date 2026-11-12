@@ -1,12 +1,14 @@
 # Blood Donation Network with Smart Matching
 
-React + Vite frontend and Node.js + Express + MongoDB backend for discovering compatible blood donors and creating blood requests.
+React + Vite frontend and Node.js + Express + MongoDB backend for discovering compatible blood donors and managing blood requests.
 
 ## Features
 - User registration and login with JWT
 - Password hashing with bcryptjs
 - Donor search by blood-group compatibility and city
-- Blood request creation and dashboard
+- Full blood-request CRUD: create, view details, edit and delete
+- Per-user request ownership: users can access and change only requests they created
+- Request status tracking: Open, Matched and Closed
 - Smart donor ranking using compatibility, location and urgency
 - Health endpoint for deployment checks
 
@@ -21,7 +23,7 @@ Copy-Item .env.example .env
 Edit `backend/.env` with your MongoDB URI and a long random JWT secret, then run:
 ```powershell
 npm start
-``
+```
 API: http://localhost:5000
 
 ### Frontend (new terminal)
@@ -56,20 +58,20 @@ This repository is configured for Vercel (frontend), Render (backend) and MongoD
 - Set `VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com/api`.
 - Deploy, then add the exact Vercel URL to Render's `CORS_ORIGINS` and redeploy the backend.
 
+## Blood request API endpoints
+- `GET /api/requests` — list the signed-in user's requests
+- `POST /api/requests` — create a request
+- `GET /api/requests/:id` — view one owned request
+- `PUT /api/requests/:id` — edit an owned request
+- `DELETE /api/requests/:id` — delete an owned request
+- `PATCH /api/requests/:id/status` — update an owned request status
+- `GET /api/requests/:id/matches` — get compatible donor matches
+
+All request endpoints require a valid JWT. Request records are scoped to the authenticated user.
+
 ## Important
 - Never publish `.env`, database passwords, JWT secrets, or real donor personal details.
 - Use fictional sample donor details in public demos.
 - Distance is simulated by the donor `distanceKm` field; it is not GPS navigation.
 - This is an academic demo, not a verified medical emergency service. Verify donors and hospitals independently.
 - Free hosting services may sleep when idle and provider limits can change.
-
-## API endpoints
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/donors?bloodGroup=A%2B&city=Kharar`
-- `POST /api/donors` (authenticated)
-- `PUT /api/donors/:id/availability` (authenticated)
-- `GET /api/requests` (authenticated)
-- `POST /api/requests` (authenticated)
-- `GET /api/requests/:id/matches` (authenticated)
-- `PATCH /api/requests/:id/status` (authenticated)
