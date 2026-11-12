@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import axios from "axios";
 import "./style.css";
 
-const API = "http://localhost:5000/api";
+const API = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/$/, "");
 
 function App() {
   const [page, setPage] = useState("home");
