@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import axios from "axios";
 import "./style.css";
+import AIHub from "./AIHub.jsx";
 
 const API = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/$/, "");
 const authHeaders = token => ({ Authorization: `Bearer ${token}` });
@@ -16,7 +17,7 @@ function App() {
   return <div>
     <nav className="navbar"><div className="brand" onClick={() => setPage("home")}>🩸 BloodConnect</div><div className="navlinks">
       <button onClick={() => setPage("home")}>Home</button><button onClick={() => setPage("donors")}>Find Donors</button>
-      {token && <><button onClick={() => setPage("request")}>Blood Request</button><button onClick={() => setPage("dashboard")}>Dashboard</button></>}
+      {token && <><button onClick={() => setPage("request")}>Blood Request</button><button onClick={() => setPage("dashboard")}>Dashboard</button><button onClick={() => setPage("ai")}>AI Hub</button></>}
       {!token ? <button className="primary" onClick={() => setPage("login")}>Login</button> : <button onClick={logout}>Logout</button>}
     </div></nav>
     {page === "home" && <Home onStart={() => setPage(token ? "request" : "login")} />}
@@ -24,6 +25,7 @@ function App() {
     {page === "donors" && <DonorSearch />}
     {page === "request" && token && <RequestForm token={token} setPage={setPage} />}
     {page === "dashboard" && token && <Dashboard token={token} setPage={setPage} />}
+    {page === "ai" && token && <AIHub token={token} />}
   </div>;
 }
 function Home({ onStart }) {
