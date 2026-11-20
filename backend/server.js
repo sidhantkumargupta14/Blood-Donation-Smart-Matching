@@ -5,6 +5,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const donorRoutes = require("./routes/donors");
 const requestRoutes = require("./routes/requests");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 const allowedOrigins = new Set(["https://bloodconnect-live.onrender.com", ...(process.env.CORS_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean)]);
@@ -18,6 +19,7 @@ app.get("/health", (_req,res)=>res.status(mongoose.connection.readyState===1?200
 app.use("/api/auth",authRoutes);
 app.use("/api/donors",donorRoutes);
 app.use("/api/requests",requestRoutes);
+app.use("/api/ai",aiRoutes);
 
 const PORT=process.env.PORT||5000;
 if(process.env.NODE_ENV==="production"&&!process.env.JWT_SECRET) throw new Error("JWT_SECRET must be set in production");
