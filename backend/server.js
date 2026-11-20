@@ -25,6 +25,20 @@ const PORT=process.env.PORT||5000;
 if(process.env.NODE_ENV==="production"&&!process.env.JWT_SECRET) throw new Error("JWT_SECRET must be set in production");
 if(process.env.NODE_ENV==="production"&&!process.env.MONGO_URI) throw new Error("MONGO_URI must be set in production");
 app.listen(PORT,"0.0.0.0",()=>console.log(`API listening on port ${PORT}`));
-mongoose.connect(process.env.MONGO_URI||"mongodb://127.0.0.1:27017/blood_donation")
- .then(()=>console.log("MongoDB connected"))
- .catch(err=>console.error("MongoDB connection failed:",err.message));
+
+const uri = process.env.MONGO_URI;
+if (!uri) {
+  console.error("MONGO_URI diagnostics: variable is missing");
+} else {
+  console.log("MongoDB URI diagnostics:", {
+    startsWithMongo: uri.startsWith("mongodb://"),
+    startsWithMongoSrv: uri.startsWith("mongodb+srv://"),
+    leadingWhitespace: uri !== uri.trim(),
+    containsQuotes: uri.includes('"') || uri.includes("'"),
+    length: uri.length
+  });
+
+  mongoose.connect(uri)
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.error("MongoDB connection failed:", err.message));
+}
